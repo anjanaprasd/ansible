@@ -1,0 +1,25 @@
+rawdisks:
+ - disk_count: 1
+   disk_size: 25GiB
+   drive: /dev/xvdb
+   disk_type: lvm
+
+vg_group:
+  - vg_name: vg00
+    device: /dev/xvdb1
+
+lv_group:
+  - name: opt
+    size: 10g
+    vg_group: vg00
+    mount_tg: /opt/
+  
+  - name: var
+    size: 5g
+    vg_group: vg00
+    mount_tg: /var
+  
+  - name: appslogs
+    size: 5g
+    vg_group: vg00
+    mount_tg: /app/logs
