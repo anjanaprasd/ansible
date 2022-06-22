@@ -1,0 +1,55 @@
+---
+- name: AnsiblePlayBook.
+  hosts: localhost
+  become: true
+  vars_files: 
+   - var_filename
+  become_user: root
+  tasks:
+    - name: create Application user group.
+      group:
+        name: "{{ item.groupname }}"
+        gid: "{{ item.group }}"
+        state: present
+      tags:
+       - group add
+
+    - name: Add Application Users
+      ansible.builtin.user:
+        name: "{{ item.users }}"
+        uid: "{{ item.uid }}"
+        group: "{{ item.group }}"
+        create_home: true
+        home: /opt/users
+        comment: "Application User"
+        shell: /bin/bash
+        state: present
+      loops:
+        - "{userdata}"
+      tags:
+       - useradd
+
+    - name: create folder structre.
+      ansible.builtin.file:
+       path: '/opt/apps/{{ item.path }}/'
+       state: directory
+       owner: "{{ item.users }}"
+       group: "{{ item.group }}"
+       mode: 0775
+       recurse: true
+      loop:
+       - {path: data}
+       - {path: data01}
+      tags:
+       - directory create.
+
+    - name: Installing OpenJDK and httpd.
+      yum:
+       name: 
+        - java-1.8.0-openjdk
+        - httpd
+        - mysqld
+       state: present
+
+    - name: java version
+      command: "java -version"
