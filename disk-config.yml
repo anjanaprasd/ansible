@@ -1,6 +1,6 @@
 ---
 - name: LVMAnsiblePlayBook.
-  hosts: default
+  hosts: localhost
   become: true
   become_user: root
   vars_files:
